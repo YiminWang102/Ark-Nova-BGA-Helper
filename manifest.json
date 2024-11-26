@@ -1,0 +1,26 @@
+{
+    "manifest_version": 3,
+    "name": "Ark Nova Helper",
+    "description": "Helps with tracking cards and projects in a game of ark nova",
+    "version": "1.0",
+    "content_scripts": [
+        {
+            "js": ["dist/bundledContent.js"],
+            "matches": [
+                "https://boardgamearena.com/*/arknova?table=*",
+                "https://boardgamearena.com/*/arknovamw?table=*"
+            ],
+            "css": ["scripts/styles.css"]
+        }
+    ],
+    "icons": {
+        "128": "images/dugong.png"
+    },
+    "permissions": ["storage"],
+    "web_accessible_resources": [
+        {
+            "resources": ["scripts/*"],
+            "matches": ["https://boardgamearena.com/*"]
+        }
+    ]
+  }
