@@ -1,1 +1,3 @@
-Follow step 2 in this guide to upload and use this chrome extension locally: https://support.google.com/chrome/a/answer/2714278?hl=en
+Download the repo and upload the entire folder to chrome extension
+
+Follow step 2 in this guide: https://support.google.com/chrome/a/answer/2714278?hl=en
