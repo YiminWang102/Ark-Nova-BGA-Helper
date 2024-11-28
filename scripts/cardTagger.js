@@ -98,7 +98,7 @@ function tagCardWithMatches(cardElement, projects) {
         return;
     }
 
-    tagCardWithOverlay(cardElement);
+    addCardOverlay(cardElement);
     addUnmarkButton(cardElement);
 
     // Create or reset the tag container
@@ -154,8 +154,8 @@ export function updateCardTags() {
 
 export function observeCards() {
     const cardAreaClasses = [
-        '.card-pool-folder',
-        '.player-board-hand'
+        '#cards-pool',
+        '.player-board-hand',
     ];
 
     cardAreaClasses.forEach((cardClass) => {
@@ -171,25 +171,20 @@ export function observeCards() {
                     return !(isOverLay || isTagContainer || isTagContainerBadge);
                 });
                 if (relevantMutations.length > 0) {
-                    debouncedUpdateCardTags();
+                    observer.disconnect();
+                    updateCardTags();
+                    setTimeout(() => {
+                        observer.observe(cardArea, { childList: true, subtree: true })
+                    }, 300)
                 }
             });
-            
-            const debouncedUpdateCardTags = debounce(() => {
-                observer.disconnect();
-                updateCardTags();
-                setTimeout(() => {
-                    observer.observe(cardArea, { childList: true, subtree: true })
-                }, 400)
-            }, 100)
-    
+
             observer.observe(cardArea, { childList: true, subtree: true });
         }
-
     });
 }
 
-function tagCardWithOverlay(card) {
+function addCardOverlay(card) {
     if (card.querySelector('.card-overlay')) {
         return; // Skip adding another overlay
     }
@@ -221,15 +216,6 @@ function removeCardOverlay(card) {
     } else {
         return;
     }
-}
-
-
-function debounce(func, delay=300) {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
 }
 
 function addUnmarkButton(cardElement) {

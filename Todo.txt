@@ -1,0 +1,5 @@
+Add and remove cards from opponent tracked cards when they undo
+
+Add options menu for overlay/tagging/colors, etc.
+
+Incoroporate size when highlighting for releases

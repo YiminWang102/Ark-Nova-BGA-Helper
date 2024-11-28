@@ -1,4 +1,6 @@
-export function injectTrackerUI(stateManager) {
+import { stateManager } from "./stateManager";
+
+export function injectTrackerUI() {
   const container = document.createElement('div');
   container.id = 'card-tracker-container';
   container.style.position = 'fixed';
@@ -71,18 +73,18 @@ export function injectTrackerUI(stateManager) {
   addCardBtn.addEventListener('click', () => {
       const cardName = prompt('Enter card name:');
       if (cardName) {
-          stateManager.addCard(cardName);
+          stateManager.addOpponentTrackedCard(cardName);
       }
   });
 
   const clearCardsBtn = container.querySelector('#clear-cards-btn');
   clearCardsBtn.addEventListener('click', () => {
-        stateManager.clearCards();
+        stateManager.clearOpponentTrackedCards();
   });
 }
 
-export function renderTrackerUI(stateManager) {
-  const state = stateManager.getState();
+export function renderTrackerUI() {
+  const opponentTrackedCards = stateManager.getOpponentTrackedCards();
   const trackerList = document.querySelector('#tracker-list');
   if (!trackerList) return;
 
@@ -90,8 +92,8 @@ export function renderTrackerUI(stateManager) {
   trackerList.innerHTML = '';
 
   // Add each card in the state
-  if (state.trackedCards.length > 0) {
-    state.trackedCards.forEach((cardName) => {
+  if (opponentTrackedCards.length > 0) {
+    opponentTrackedCards.forEach((cardName) => {
       const cardElement = document.createElement('div');
       cardElement.style.display = 'flex';
       cardElement.style.justifyContent = 'space-between';
@@ -111,7 +113,7 @@ export function renderTrackerUI(stateManager) {
 
       // Add event listener to remove the card
       removeButton.addEventListener('click', () => {
-        stateManager.removeCard(cardName); // Call stateManager to remove the card
+        stateManager.removeOpponentTrackedCard(cardName); // Call stateManager to remove the card
       });
 
       // Append text and button to the card element

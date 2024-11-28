@@ -1,25 +1,24 @@
 import { injectTrackerUI, renderTrackerUI } from './trackerUI.js';
-import { observeLogChanges, processLogEntry } from './logObserver.js';
-import { parsePlayerNames } from './playerNameParser.js';
+import { observeLogChanges } from './logParser.js';
+import { updatePlayerNames } from './playerNameParser.js';
 import { updateCardTags, observeCards } from './cardTagger.js';
-import StateManager from './stateManager.js';
+import { stateManager } from './stateManager.js';
+import { CardTracker } from './cardTracker.js';
 
-const stateManager = new StateManager();
-
-function onStart(stateManager) {
+function onStart() {
   stateManager.loadState();
   stateManager.onStateChange(renderTrackerUI);
+  cardTracker = new CardTracker();
 
-  injectTrackerUI(stateManager);
-
+  injectTrackerUI();
 
   setTimeout(() => {
-    observeLogChanges('#logs', processLogEntry, stateManager);
-    const { yourName, opponentName } = parsePlayerNames();
-    stateManager.updatePlayerNames(yourName, opponentName);
+    updatePlayerNames();
     updateCardTags();
+
+    observeLogChanges();
     observeCards();
-  }, 1000);
+  }, 500);
 }
 
 if (document.readyState === 'loading') {
