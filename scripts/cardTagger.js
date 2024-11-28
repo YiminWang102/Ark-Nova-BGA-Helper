@@ -99,7 +99,7 @@ function tagCardWithMatches(cardElement, projects) {
     }
 
     addCardOverlay(cardElement);
-    addUnmarkButton(cardElement);
+    addIgnoreButton(cardElement);
 
     // Create or reset the tag container
     tagContainer = document.createElement('div');
@@ -153,13 +153,13 @@ export function updateCardTags() {
 }
 
 export function observeCards() {
-    const cardAreaClasses = [
+    const cardAreaSelectors = [
         '#cards-pool',
         '.player-board-hand',
     ];
 
-    cardAreaClasses.forEach((cardClass) => {
-        const cardArea = document.querySelector(cardClass);
+    cardAreaSelectors.forEach((selector) => {
+        const cardArea = document.querySelector(selector);
         if (cardArea) {
             const observer = new MutationObserver((mutations) => {
                 const relevantMutations = mutations.filter((mutation) => {
@@ -180,6 +180,32 @@ export function observeCards() {
             });
 
             observer.observe(cardArea, { childList: true, subtree: true });
+        }
+    });
+
+    const playAreaSelectors = [
+        '.player-board-cards',
+    ];
+
+    playAreaSelectors.forEach((selector) => {
+        const playArea = document.querySelector(selector);
+        if (playArea) {
+            console.log("setting up mutation observer for ", playArea);
+
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                console.log("Mutation Observed", mutation);
+                    if (mutation.addedNodes.length > 0) {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.classList && node.classList.contains('ark-card')) {
+                                clearCard(node);
+                            }
+                        });
+                    }
+                });
+            });
+
+            observer.observe(playArea, { childList: true, subtree: true });
         }
     });
 }
@@ -218,7 +244,7 @@ function removeCardOverlay(card) {
     }
 }
 
-function addUnmarkButton(cardElement) {
+function addIgnoreButton(cardElement) {
     // Check if the button already exists
     let unmarkButton = cardElement.querySelector('.unmark-button');
     if (!unmarkButton) {
@@ -246,22 +272,10 @@ function addUnmarkButton(cardElement) {
         // Add click event to unmark the card
         unmarkButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            unmarkCard(cardElement);
+            ignoreCard(cardElement);
         });
         cardElement.appendChild(unmarkButton);
     }
-}
-
-function unmarkCard(cardElement) {
-    // Remove tags
-    const tagContainer = cardElement.querySelector('.tag-container');
-    if (tagContainer) tagContainer.remove();
-
-    // Remove overlay
-    removeCardOverlay(cardElement);
-    removeUnmarkButton(cardElement);
-    // Mark card as unmarked
-    cardElement.setAttribute('data-unmarked', 'true');
 }
 
 function removeUnmarkButton(cardElement) {
@@ -271,4 +285,19 @@ function removeUnmarkButton(cardElement) {
     } else {
         return;
     }
+}
+
+function ignoreCard(cardElement) {
+    clearCard(cardElement);
+    // Mark card as unmarked
+    cardElement.setAttribute('data-unmarked', 'true');
+}
+
+function clearCard(cardElement) {
+    const tagContainer = cardElement.querySelector('.tag-container');
+    if (tagContainer) tagContainer.remove();
+
+    // Remove overlay
+    removeCardOverlay(cardElement);
+    removeUnmarkButton(cardElement);
 }
