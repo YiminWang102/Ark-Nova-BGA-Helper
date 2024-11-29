@@ -14,7 +14,7 @@
         }
     ],
     "icons": {
-        "128": "images/dugong.png"
+        "128": "images/arkZoo.png"
     },
     "permissions": ["storage"],
     "web_accessible_resources": [
