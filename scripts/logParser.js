@@ -23,7 +23,11 @@ const patterns = [
         action: DRAW,
     },
     {
-        regex: /^(.*) keeps (.*) card/, // hunting
+        regex: /^(.*) keeps (.*?) card/, // hunting
+        action: DRAW,
+    },
+    {
+        regex: /^(.*) takes (.*?) from the diplay/, // sponsor magnet
         action: DRAW,
     },
     {
@@ -31,7 +35,7 @@ const patterns = [
         action: PLAY,
     },
     {
-        regex: /^(.*) plays (.*)$/, // sponsor
+        regex: /^(.*) plays (.*)/, // sponsor
         action: PLAY,
     },
     {
@@ -46,14 +50,22 @@ function parseLogEntry(logEntry) {
 
         if (match) {
             const playerName = match[1] ? match[1].trim() : undefined;
-            const cardName = match[2] ? match[2].trim() : undefined;
+            const cardNames = match[2] ? match[2].trim() : undefined;
 
-            if (action === DRAW) {
-                pubSub.publish(DRAW, { playerName, cardName });
-            }
-            if (action === PLAY) {
-                pubSub.publish(PLAY, { playerName, cardName });
-            }
+            cardNames.split(',').forEach(cardName => {
+                cardName = cardName.trim();
+
+                if (!isNaN(cardName)) {
+                    return;
+                }
+                if (action === DRAW) {
+                    pubSub.publish(DRAW, { playerName, cardName });
+                }
+                if (action === PLAY) {
+                    pubSub.publish(PLAY, { playerName, cardName });
+                }
+            });
+
             return; // Exit after processing the first matching pattern
         }
     }
