@@ -1,11 +1,13 @@
 import { pubSub } from "./pubSub";
 import { stateManager } from "./stateManager";
-import { DRAW, PLAY } from './logParser';
+import { DRAW, PLAY, START, END } from './logParser';
 
 export class CardTracker {
     constructor() {
         pubSub.subscribe(DRAW, this.handleCardDrawn.bind(this));
         pubSub.subscribe(PLAY, this.handleCardPlayed.bind(this));
+        pubSub.subscribe(START, this.handleGameStart.bind(this));
+        pubSub.subscribe(END, this.handleGameEnd.bind(this));
     }
 
     handleCardDrawn({ playerName, cardName }) {
@@ -18,5 +20,13 @@ export class CardTracker {
         if (playerName === stateManager.getOpponentName()) {
             stateManager.removeOpponentTrackedCard(cardName);
         }
+    }
+
+    handleCardStart() {
+        stateManager.clearOpponentTrackedCards();
+    }
+
+    handleCardEnd() {
+        stateManager.clearOpponentTrackedCards();
     }
 }

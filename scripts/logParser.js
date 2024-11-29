@@ -3,12 +3,22 @@ import { pubSub } from "./pubSub";
 export const DRAW = 'DRAW';
 export const PLAY = 'PLAY';
 export const SKIP = 'SKIP';
+export const START = 'START';
+export const END = 'END';
 
 
 const patterns = [
     {
         regex: /^(.*) is now/, // skip
         action: SKIP,
+    },
+    {
+        regex: /^You draw (.*) from the deck (scoring cards)/, // start the game
+        action: START,
+    },
+    {
+        regex: /^The end of the game: (.*) wins!/, // start the game
+        action: END,
     },
     {
         regex: /^(.*) takes (.*) in reputation range from the display/, // draw from rep
@@ -49,6 +59,13 @@ function parseLogEntry(logEntry) {
         const match = logEntry.match(regex);
 
         if (match) {
+            if (action == START) {
+                pubSub.publish(START);
+            }
+            if (action == END) {
+                pubSub.publish(END);
+            }
+            
             const playerName = match[1] ? match[1].trim() : undefined;
             const cardNames = match[2] ? match[2].trim() : undefined;
 
