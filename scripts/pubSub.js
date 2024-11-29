@@ -17,6 +17,7 @@ class PubSub {
     }
 
     publish(eventName, data) {
+        console.log("publishing event ", eventName, data);
         if (this.events[eventName]) {
             this.events[eventName].forEach((callback) => callback(data));
         }

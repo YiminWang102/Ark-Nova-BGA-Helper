@@ -22,11 +22,11 @@ export class CardTracker {
         }
     }
 
-    handleCardStart() {
+    handleGameStart() {
         stateManager.clearOpponentTrackedCards();
     }
 
-    handleCardEnd() {
+    handleGameEnd() {
         stateManager.clearOpponentTrackedCards();
     }
 }

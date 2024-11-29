@@ -1,3 +1,5 @@
+import { debounce } from './utils';
+
 function parseConservationProjects() {
     const conservationProjects = [];
   
@@ -161,6 +163,14 @@ export function observeCards() {
     cardAreaSelectors.forEach((selector) => {
         const cardArea = document.querySelector(selector);
         if (cardArea) {
+            const debouncedUpdatedCardTags = debounce(() => {
+                observer.disconnect();
+                updateCardTags();
+                setTimeout(() => {
+                    observer.observe(cardArea, { childList: true, subtree: true })
+                }, 300)
+            });
+
             const observer = new MutationObserver((mutations) => {
                 const relevantMutations = mutations.filter((mutation) => {
                     // Ignore mutations affecting overlay or tags
@@ -171,11 +181,7 @@ export function observeCards() {
                     return !(isOverLay || isTagContainer || isTagContainerBadge);
                 });
                 if (relevantMutations.length > 0) {
-                    observer.disconnect();
-                    updateCardTags();
-                    setTimeout(() => {
-                        observer.observe(cardArea, { childList: true, subtree: true })
-                    }, 300)
+                    debouncedUpdatedCardTags();
                 }
             });
 
@@ -190,11 +196,8 @@ export function observeCards() {
     playAreaSelectors.forEach((selector) => {
         const playArea = document.querySelector(selector);
         if (playArea) {
-            console.log("setting up mutation observer for ", playArea);
-
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
-                console.log("Mutation Observed", mutation);
                     if (mutation.addedNodes.length > 0) {
                         mutation.addedNodes.forEach((node) => {
                             if (node.classList && node.classList.contains('ark-card')) {

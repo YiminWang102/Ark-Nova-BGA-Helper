@@ -13,7 +13,7 @@ const patterns = [
         action: SKIP,
     },
     {
-        regex: /^You draw (.*) from the deck (scoring cards)/, // start the game
+        regex: /^You draw (.*) from the deck \(scoring cards\)/, // start the game
         action: START,
     },
     {
@@ -59,13 +59,18 @@ function parseLogEntry(logEntry) {
         const match = logEntry.match(regex);
 
         if (match) {
-            if (action == START) {
+            if (action === SKIP) {
+                return;
+            }
+            if (action === START) {
                 pubSub.publish(START);
+                return;
             }
-            if (action == END) {
+            if (action === END) {
                 pubSub.publish(END);
+                return;
             }
-            
+
             const playerName = match[1] ? match[1].trim() : undefined;
             const cardNames = match[2] ? match[2].trim() : undefined;
 

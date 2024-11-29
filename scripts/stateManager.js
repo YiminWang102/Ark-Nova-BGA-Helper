@@ -44,7 +44,6 @@ class StateManager {
     }
 
     addOpponentTrackedCard(cardName) {
-        console.log('addOpponentTrackedCard ', this.state);
         if (!this.state.opponentTrackedCards.includes(cardName)) {
             this.state.opponentTrackedCards.push(cardName);
             this.saveState();
