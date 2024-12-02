@@ -45,13 +45,14 @@ const patterns = [
         action: PLAY,
     },
     {
-        regex: /^(.*) plays (.*)/, // sponsor
+        regex: /^(.*) plays a new conservation project: (.*)/, // conservation project
         action: PLAY,
     },
     {
-        regex: /^(.*) plays a new conservation project: (.*)$/, // conservation project
+        regex: /^(.*) plays (.*)/, // sponsor
         action: PLAY,
     },
+
 ];
 
 function parseLogEntry(logEntry) {
