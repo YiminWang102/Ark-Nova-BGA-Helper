@@ -37,7 +37,7 @@ const patterns = [
         action: DRAW,
     },
     {
-        regex: /^(.*) takes (.*?) from the diplay/, // sponsor magnet
+        regex: /^(.*) takes (.*?) from the display/, // sponsor magnet
         action: DRAW,
     },
     {
