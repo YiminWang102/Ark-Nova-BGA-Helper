@@ -126,7 +126,7 @@ function tagCardWithMatches(cardElement, projects) {
 
 const projectTypeColors = {
     BASE: '#4CAF50',    // Green
-    RELEASE: '#FF5722', // Orange
+    RELEASE: '#FF0000', // Red
     PROG: '#2196F3',    // Blue
     DEFAULT: '#9E9E9E'  // Gray (for unknown types)
 };
@@ -140,9 +140,9 @@ function createTagElement(tagText, projectType) {
     badge.style.backgroundColor = color;
     badge.style.color = 'white';
     badge.style.borderRadius = '12px';
-    badge.style.padding = '4px 8px';
+    badge.style.padding = '5px 10px';
     badge.style.marginBottom = '4px';
-    badge.style.fontSize = '12px';
+    badge.style.fontSize = '14px';
     badge.style.fontWeight = 'bold';
     badge.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
     badge.style.pointerEvents = 'none';

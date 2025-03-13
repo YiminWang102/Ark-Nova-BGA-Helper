@@ -5,6 +5,7 @@ export const PLAY = 'PLAY';
 export const SKIP = 'SKIP';
 export const START = 'START';
 export const END = 'END';
+export const RESISTANCE = 'RESISTANCE';
 
 
 const patterns = [
@@ -31,6 +32,10 @@ const patterns = [
     {
         regex: /^(.*) draws (.*) sponsor/, // hollywood hills
         action: DRAW,
+    },
+    {
+        regex: /keeps 1 scoring card and discard 1 scoring card for resistance effect/, // hunting
+        action: RESISTANCE,
     },
     {
         regex: /^(.*) keeps (.*?) card/, // hunting
@@ -69,6 +74,9 @@ function parseLogEntry(logEntry) {
             }
             if (action === END) {
                 pubSub.publish(END);
+                return;
+            }
+            if (action === RESISTANCE) {
                 return;
             }
 
