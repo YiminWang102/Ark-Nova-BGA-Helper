@@ -25,12 +25,14 @@ export function injectTrackerUI() {
   header.style.textAlign = 'center';
   header.style.borderBottom = '1px solid #ccc';
   header.style.borderRadius = '10px';
+  header.style.userSelect = 'none'; // Prevent text selection on double-click
 
   header.textContent = 'Card Tracker';
   container.appendChild(header);
 
   // Tracker content
   const content = document.createElement('div');
+  content.id = 'card-tracker-content'; // Track this element by ID for future reference
   content.innerHTML = `
     <div id="tracker-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background-color: #fff;">
       <p style="text-align: center; color: #999;">No cards tracked yet.</p>
@@ -80,6 +82,36 @@ export function injectTrackerUI() {
   const clearCardsBtn = container.querySelector('#clear-cards-btn');
   clearCardsBtn.addEventListener('click', () => {
         stateManager.clearOpponentTrackedCards();
+  });
+
+  // Double-click header to minimize/maximize
+  let contentMinimized = false;
+  let originalPosition = null;
+
+  header.addEventListener('dblclick', () => {
+    contentMinimized = !contentMinimized;
+    const content = document.getElementById('card-tracker-content');
+
+    // The popup "jumps" when we minimize it if we haven't dragged it,
+    // so we store the original position to fix that.
+    // Use container.style.left to check if it's in its original position.
+    if (!container.style.left && !originalPosition) {
+      const rect = container.getBoundingClientRect();
+      originalPosition = {
+        top: rect.top,
+        left: rect.left
+      };
+    }
+
+    // Toggle content visibility
+    content.style.display = contentMinimized ? 'none' : 'block';
+
+    // Apply position fixing only if we haven't manually dragged
+    if (!container.style.left && originalPosition) {
+      container.style.transform = '';
+      container.style.top = `${originalPosition.top}px`;
+      container.style.left = `${originalPosition.left}px`;
+    }
   });
 }
 
