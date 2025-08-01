@@ -18,7 +18,7 @@ const patterns = [
         action: START,
     },
     {
-        regex: /^The end of the game: (.*) wins!/, // start the game
+        regex: /^The end of the game: (.*) wins!/, // end the game
         action: END,
     },
     {
@@ -31,6 +31,10 @@ const patterns = [
     },
     {
         regex: /^(.*) draws (.*) sponsor/, // hollywood hills
+        action: DRAW,
+    },
+    {
+        regex: /^(.*) draws 1 .*: (.*)/, // animal uni
         action: DRAW,
     },
     {
@@ -114,7 +118,9 @@ export function observeLogChanges() {
             if (mutation.addedNodes.length > 0) {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
+                    node.querySelectorAll('.timestamp').forEach(el => el.remove());
                     const logEntry = node.textContent.trim().replace(/\n|\r/g, "");
+                    console.log(logEntry)
                     parseLogEntry(logEntry);
                 }
             });
