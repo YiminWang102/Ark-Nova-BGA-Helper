@@ -1,6 +1,6 @@
 import { pubSub } from "./pubSub";
 import { stateManager } from "./stateManager";
-import { DRAW, PLAY, START, END } from './logParser';
+import { DRAW, PLAY, START, END } from './constants';
 
 export class CardTracker {
     constructor() {

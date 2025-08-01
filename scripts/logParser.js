@@ -1,12 +1,5 @@
 import { pubSub } from "./pubSub";
-
-export const DRAW = 'DRAW';
-export const PLAY = 'PLAY';
-export const SKIP = 'SKIP';
-export const START = 'START';
-export const END = 'END';
-export const RESISTANCE = 'RESISTANCE';
-
+import { DRAW, PLAY, SKIP, START, END, RESISTANCE } from "./constants";
 
 const patterns = [
     {

@@ -1,64 +1,6 @@
 import { debounce } from './utils';
-
-function parseConservationProjects() {
-    const conservationProjects = [];
-  
-    // Parse base projects
-    const baseProjectElements = document.querySelectorAll('#base-projects-holder .project-holder');
-    baseProjectElements.forEach((project) => {
-        const badge = project.querySelector('.badge-icon');
-        if (badge) {
-            const projectType = badge.getAttribute('data-type');
-            
-            if (projectType) {
-                conservationProjects.push({ type: 'BASE', projectType });
-            }
-        }
-    });
-
-    function parseNonBaseProject(project) {
-        const badge = project.querySelector('.badge-icon');
-        const pzooIcon = project.querySelector('.icon-partner-zoo');
-        const releaseIcon = project.querySelector('.icon-release-animal');
-
-        if (badge) {
-            const projectType = badge.getAttribute('data-type');
-            
-            if (projectType) {
-                if (pzooIcon) {
-                    conservationProjects.push({ type: 'PROG', projectType });
-                }
-
-                if (releaseIcon) {
-                    conservationProjects.push({ type: 'RELEASE', projectType });
-                }
-            }
-        }
-    }
-
-    // Parse project holder
-    const activeProjects = document.querySelectorAll('#projects-holder .project-holder');
-    activeProjects.forEach(parseNonBaseProject);
-
-    // Parse hand and display for projects
-    const displayProjectCards = document.querySelectorAll('#cards-pool .project-card');
-    displayProjectCards.forEach(parseNonBaseProject);
-
-    const handProjectCards = document.querySelectorAll('.player-board-hand .project-card');
-    handProjectCards.forEach(parseNonBaseProject);
-
-    return conservationProjects;
-}
-
-function extractCardIcons(cardElement) {
-    const topRightDiv = cardElement.querySelector('.ark-card-top-right');
-    if (!topRightDiv) return [];
-  
-    // Extract unique icons using a Set
-    const badges = topRightDiv.querySelectorAll('.badge-icon');
-    const icons = new Set(Array.from(badges).map((badge) => badge.getAttribute('data-type')));
-    return Array.from(icons); // Convert Set back to an array
-}
+import { parseConservationProjects } from './conservationProjectParser';
+import { extractCardIcons } from './cardIconExtractor';
 
 function matchCardToProjects(cardElement, conservationProjects) {
     const cardIcons = extractCardIcons(cardElement); // Deduplicated icons from the card
@@ -74,7 +16,7 @@ function matchCardToProjects(cardElement, conservationProjects) {
     return matches;
 }
 
-function tagMatchingCards(projects) {
+function tagProjectMatchingCards(projects) {
     const cardAreas = ['.card-pool-folder .ark-card', '.player-board-hand .ark-card'];
   
     cardAreas.forEach((area) => {
@@ -84,12 +26,12 @@ function tagMatchingCards(projects) {
             if (card.getAttribute('data-unmarked') === 'true') return;
 
             const matchingProjects = matchCardToProjects(card, projects);
-            tagCardWithMatches(card, matchingProjects);
+            tagCardWithMatchingProjects(card, matchingProjects);
         });
     });
 }
 
-function tagCardWithMatches(cardElement, projects) {
+function tagCardWithMatchingProjects(cardElement, projects) {
     let tagContainer = cardElement.querySelector('.tag-container');
     if (tagContainer) {
         tagContainer.remove();
@@ -118,7 +60,7 @@ function tagCardWithMatches(cardElement, projects) {
 
     projects.forEach((project) => {
           // Create and append the new tag
-        const badge = createTagElement(project.type, project.type);
+        const badge = createProjectTagElement(project.type, project.type);
         tagContainer.appendChild(badge);
     });
 
@@ -131,12 +73,12 @@ const projectTypeColors = {
     DEFAULT: '#9E9E9E'  // Gray (for unknown types)
 };
 
-function createTagElement(tagText, projectType) {
+function createProjectTagElement(tagText, projectType) {
     const color = projectTypeColors[projectType] || projectTypeColors.DEFAULT;
 
     const badge = document.createElement('div');
     badge.textContent = tagText;
-    badge.className = 'tag-container-badge';
+    badge.className = 'tag-container-badge-matching-project';
     badge.style.backgroundColor = color;
     badge.style.color = 'white';
     badge.style.borderRadius = '12px';
@@ -151,7 +93,7 @@ function createTagElement(tagText, projectType) {
 
 export function updateCardTags() {
     const projects = parseConservationProjects();
-    tagMatchingCards(projects);
+    tagProjectMatchingCards(projects);
 }
 
 export function observeCards() {
