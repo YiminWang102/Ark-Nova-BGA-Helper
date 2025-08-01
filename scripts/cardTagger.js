@@ -1,12 +1,12 @@
 import { debounce } from './utils';
 import { parseConservationProjects } from './conservationProjectParser';
+import { parseSponsorIcons } from './sponsorIconParser';
 import { extractCardIcons } from './cardIconExtractor';
 
 function matchCardToProjects(cardElement, conservationProjects) {
     const cardIcons = extractCardIcons(cardElement); // Deduplicated icons from the card
     const matches = [];
 
-    // Match card icons with conservation project types
     for (const project of conservationProjects) {
         if (cardIcons.includes(project.projectType)) {
             matches.push(project);
@@ -16,7 +16,20 @@ function matchCardToProjects(cardElement, conservationProjects) {
     return matches;
 }
 
-function tagProjectMatchingCards(projects) {
+function matchCardToSponsorIcons(cardElement, sponsorIcons) {
+    const cardIcons = extractCardIcons(cardElement); // Deduplicated icons from the card
+    const matches = [];
+
+    for (const sponsorIcon of sponsorIcons) {
+        if (cardIcons.includes(sponsorIcon)) {
+            matches.push({type:'SPONSOR'});
+        }
+    }
+
+    return matches;
+};
+
+function tagCardsWithMatchingIcons(projects, sponsorIcons) {
     const cardAreas = ['.card-pool-folder .ark-card', '.player-board-hand .ark-card'];
   
     cardAreas.forEach((area) => {
@@ -26,12 +39,15 @@ function tagProjectMatchingCards(projects) {
             if (card.getAttribute('data-unmarked') === 'true') return;
 
             const matchingProjects = matchCardToProjects(card, projects);
-            tagCardWithMatchingProjects(card, matchingProjects);
+            const matchingSponsorIcons = matchCardToSponsorIcons(card, sponsorIcons)
+
+            const matchingIcons = [...matchingProjects, ...matchingSponsorIcons];
+            tagCardWithMatchingIcons(card, matchingIcons);
         });
     });
 }
 
-function tagCardWithMatchingProjects(cardElement, projects) {
+function tagCardWithMatchingIcons(cardElement, projects) {
     let tagContainer = cardElement.querySelector('.tag-container');
     if (tagContainer) {
         tagContainer.remove();
@@ -67,10 +83,11 @@ function tagCardWithMatchingProjects(cardElement, projects) {
 }
 
 const projectTypeColors = {
+    DEFAULT: '#9E9E9E',  // Gray (for unknown types)
     BASE: '#4CAF50',    // Green
     RELEASE: '#FF0000', // Red
-    PROG: '#2196F3',    // Blue
-    DEFAULT: '#9E9E9E'  // Gray (for unknown types)
+    PROG: '#FFA500', // Orange
+    SPONSOR: '#0000FF',    // Blue
 };
 
 function createProjectTagElement(tagText, projectType) {
@@ -93,7 +110,9 @@ function createProjectTagElement(tagText, projectType) {
 
 export function updateCardTags() {
     const projects = parseConservationProjects();
-    tagProjectMatchingCards(projects);
+    const sponsorIcons = parseSponsorIcons();
+
+    tagCardsWithMatchingIcons(projects, sponsorIcons);
 }
 
 export function observeCards() {

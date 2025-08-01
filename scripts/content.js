@@ -4,13 +4,12 @@ import { updatePlayerNames } from './playerNameParser.js';
 import { updateCardTags, observeCards } from './cardTagger.js';
 import { stateManager } from './stateManager.js';
 import { CardTracker } from './cardTracker.js';
-import { BoardChecker } from './boardChecker.js';
+import { getYourPlayedSponsors } from './boardChecker.js';
 
 function onStart() {
   stateManager.loadState();
   stateManager.onStateChange(renderTrackerUI);
   cardTracker = new CardTracker();
-  boardChecker = new BoardChecker();
 
   injectTrackerUI();
 
@@ -21,7 +20,7 @@ function onStart() {
     observeLogChanges();
     observeCards();
 
-    boardChecker.getYourPlayedSponsors()
+    getYourPlayedSponsors()
   }, 1000);
 }
 
